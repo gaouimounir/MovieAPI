@@ -1,5 +1,5 @@
 using System.Data.Common;
-
+using MySql.Data.MySqlClient;
 using Npgsql;
 
 namespace MovieMinimalAPI
@@ -40,22 +40,24 @@ namespace MovieMinimalAPI
         {
             List<Movie> movies = new();
 
-            var connectionPgSqlString = "Host=localhost;Port=5432;Username=postgres;Password=admin;Database=Streaming;Pooling=true;";
-            //string connectionMySqlString = "TODO";
-            //string connectionMsSqlString = "TODO";
+            var connectionMySqlString = "Server=127.0.0.1;Port=3306;User ID=root;Password=;Database=streaming;";
 
-            using var dataSource = NpgsqlDataSource.Create(connectionPgSqlString);
-            using var cmd = dataSource.CreateCommand("SELECT * FROM nomTablemovie");
-            using var reader = cmd.ExecuteReader();
+
+            using MySqlConnection connection = new MySqlConnection(connectionMySqlString);
+            connection.Open();
+
+            using var commandSelect = new MySqlCommand("SELECT * FROM movie;", connection);
+            using var reader = commandSelect.ExecuteReader();
             {
                 while (reader.Read())
                 {
                     Movie movieToAdd = new()
                     {
-                        Id = (int)reader["nomColonneId"],
-                        Title = reader["nomColonneTitle"].ToString(),
-                        ReleaseYear = (int)reader["nomColonneReleaseYear"],
-                        CreateDate = (DateTime)reader["nomColonneCreateDate"],
+                        Id = (int)reader["Id_movie"],
+                        Title = reader["title"].ToString(),
+                        ReleaseYear = (DateTime)reader["release_year"],
+                        CreateDate = (DateTime)reader["creation_date_movie"],
+                        Duration = (int)reader["duration"]
                     };
                     movies.Add(movieToAdd);
                 }
@@ -65,5 +67,5 @@ namespace MovieMinimalAPI
         }
     }
 
-   
+
 }
