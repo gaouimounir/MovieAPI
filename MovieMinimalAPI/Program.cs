@@ -1,6 +1,6 @@
 using System.Data.Common;
 using MySql.Data.MySqlClient;
-using Npgsql;
+
 
 namespace MovieMinimalAPI
 {
@@ -11,6 +11,11 @@ namespace MovieMinimalAPI
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen();
+
+            // Activer CORS
+            builder.Services.AddCors();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -24,6 +29,10 @@ namespace MovieMinimalAPI
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            // Activer CORS (autoriser toutes les origines, méthodes et en-têtes pour simplifier ; ajustez selon vos besoins)
+            app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+
 
             app.UseHttpsRedirection();
 
