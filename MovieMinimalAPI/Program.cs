@@ -30,16 +30,15 @@ namespace MovieMinimalAPI
                 app.UseSwaggerUI();
             }
 
-            // Activer CORS (autoriser toutes les origines, méthodes et en-têtes pour simplifier ; ajustez selon vos besoins)
+            // Activer CORS (autoriser toutes les origines, mï¿½thodes et en-tï¿½tes pour simplifier ; ajustez selon vos besoins)
             app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
 
             app.UseHttpsRedirection();
 
-            app.MapGet("/movies/{1}", async () =>
-            {
+            app.MapGet("/movies/{id}", (int id) => GetOneMovie(id));
 
-            });
+
             app.MapGet("/movies", GetAllMovie);
 
             app.Run();
@@ -74,6 +73,41 @@ namespace MovieMinimalAPI
 
             return movies.ToArray();
         }
+
+
+        private static Movie GetOneMovie(int id)
+        {
+
+            Movie OneMovie = new();
+
+
+            var connectionMySqlString = "Server=127.0.0.1;Port=3306;User ID=root;Password=;Database=streaming;";
+
+            using MySqlConnection connection = new MySqlConnection(connectionMySqlString);
+            connection.Open();
+
+            using var commandSelect = new MySqlCommand("SELECT * FROM movie WHERE Id_movie = @Id;", connection);
+            commandSelect.Parameters.AddWithValue("@Id", id);
+
+            using var reader = commandSelect.ExecuteReader();
+
+            if (reader.Read())
+            {
+                OneMovie =  new Movie
+                {
+                    Id = (int)reader["Id_movie"],
+                    Title = reader["title"].ToString(),
+                    ReleaseYear = (DateTime)reader["release_year"],
+                    CreateDate = (DateTime)reader["creation_date_movie"],
+                    Duration = (int)reader["duration"]
+                };
+            }
+
+            return OneMovie;
+        }
+
+
+
     }
 
 
