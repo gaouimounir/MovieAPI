@@ -1,4 +1,5 @@
 using System.Data.Common;
+using Microsoft.VisualBasic;
 using MySql.Data.MySqlClient;
 
 
@@ -40,6 +41,12 @@ namespace MovieMinimalAPI
 
 
             app.MapGet("/movies", GetAllMovie);
+
+            app.MapPost("/movies", (Movie newMovie) =>
+            {
+                AddMovie(newMovie);
+                return Results.Created($"/movies/{newMovie.Id}", newMovie);
+            });
 
             app.Run();
         }
@@ -93,7 +100,7 @@ namespace MovieMinimalAPI
 
             if (reader.Read())
             {
-                OneMovie =  new Movie
+                OneMovie = new Movie
                 {
                     Id = (int)reader["Id_movie"],
                     Title = reader["title"].ToString(),
@@ -104,6 +111,29 @@ namespace MovieMinimalAPI
             }
 
             return OneMovie;
+        }
+
+        private static void AddMovie(Movie newMovie)
+        {
+
+            Movie OneMovie = new();
+
+
+            var connectionMySqlString = "Server=127.0.0.1;Port=3306;User ID=root;Password=;Database=streaming;";
+
+            using MySqlConnection connection = new MySqlConnection(connectionMySqlString);
+            connection.Open();
+
+            using var commandInsert = new MySqlCommand("INSERT INTO movie (title, release_year, duration) VALUES (@Title, @ReleaseYear, @Duration);", connection);
+            commandInsert.Parameters.AddWithValue("@Title", newMovie.Title);
+            commandInsert.Parameters.AddWithValue("@ReleaseYear", newMovie.ReleaseYear);
+            commandInsert.Parameters.AddWithValue("@Duration", newMovie.Duration);
+
+            commandInsert.ExecuteNonQuery();
+
+
+
+
         }
 
 
