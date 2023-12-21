@@ -36,6 +36,7 @@ function App() {
   };
 
   const ajouterFilm = () => {
+    console.log(filmData);
     axios
       .post(`${apiBaseUrl}/movies`, filmData)
       .then((response) => setFilmsData(response.data))
@@ -64,7 +65,7 @@ function App() {
 
   const supprimerActeur = () => {
     axios
-      .delete(`${apiBaseUrl}/acteurs/${acteurId}`)
+      .delete(`${apiBaseUrl}/actors/${acteurId}`)
       .then((response) => setFilmsData(response.data))
       .catch((error) =>
         console.error("Erreur lors de la suppression d'un acteur", error)

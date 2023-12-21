@@ -1,11 +1,11 @@
-﻿namespace MovieMinimalAPI;
+namespace MovieMinimalAPI;
 
-public class Movie
+public class PostMovie
 {
     public int Id { get; set; }
-    public string? Title { get; set; }
+    public string? titre { get; set; }
     public int Duration { get; set; }
-    public int ReleaseYear { get; set; }
+    public int dateSortie { get; set; }
     public DateTime CreateDate { get; set; }
     public DateTime ModifDate { get; set; }
 }
