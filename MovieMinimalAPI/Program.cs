@@ -114,7 +114,6 @@ namespace MovieMinimalAPI
             return movies.ToArray();
         }
 
-
         private static Movie GetOneMovie(int id)
         {
 
@@ -213,6 +212,8 @@ namespace MovieMinimalAPI
             {
                 return null; // Film non trouvé
             }
+
+            reader.Close();
 
             // Mettre à jour le film
             using var commandUpdate = new MySqlCommand("UPDATE movie SET title = @Title, release_year = @ReleaseYear, duration = @Duration WHERE Id_movie = @Id;", connection);
