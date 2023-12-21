@@ -44,8 +44,8 @@ namespace MovieMinimalAPI
 
             app.MapPost("/movies", (Movie newMovie) =>
             {
-                AddMovie(newMovie);
-                return Results.Created($"/movies/{newMovie.Id}", newMovie);
+                Movie created = AddMovie(newMovie);
+                return Results.Created($"/movies/{created.Id}", created);
             });
 
             app.Run();
@@ -113,7 +113,29 @@ namespace MovieMinimalAPI
             return OneMovie;
         }
 
-        private static void AddMovie(Movie newMovie)
+        private static Movie AddMovie(Movie newMovie)
+        {
+            var connectionMySqlString = "Server=127.0.0.1;Port=3306;User ID=root;Password=;Database=streaming;";
+
+            using MySqlConnection connection = new MySqlConnection(connectionMySqlString);
+            connection.Open();
+
+            using var commandInsert = new MySqlCommand("INSERT INTO movie (title, release_year, duration) VALUES (@Title, @ReleaseYear, @Duration); SELECT LAST_INSERT_ID();", connection);
+            commandInsert.Parameters.AddWithValue("@Title", newMovie.Title);
+            commandInsert.Parameters.AddWithValue("@ReleaseYear", newMovie.ReleaseYear);
+            commandInsert.Parameters.AddWithValue("@Duration", newMovie.Duration);
+
+
+            newMovie.Id = Convert.ToInt32(commandInsert.ExecuteScalar());
+
+            return newMovie;
+
+
+
+
+        }
+
+        private static void AddActor(Movie newMovie)
         {
 
             Movie OneMovie = new();
@@ -129,7 +151,10 @@ namespace MovieMinimalAPI
             commandInsert.Parameters.AddWithValue("@ReleaseYear", newMovie.ReleaseYear);
             commandInsert.Parameters.AddWithValue("@Duration", newMovie.Duration);
 
-            commandInsert.ExecuteNonQuery();
+
+
+
+
 
 
 
